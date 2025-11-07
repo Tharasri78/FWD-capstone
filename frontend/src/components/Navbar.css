@@ -1,0 +1,14 @@
+.nav {
+    position: sticky; top: 0; z-index: 10;
+    background: #0b0d12; border-bottom: 1px solid var(--edge);
+  }
+  .nav-wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+  }
+  .brand { font-weight: 800; color: var(--text); }
+  .links { display: flex; align-items: center; gap: 16px; }
+  .links a { color: var(--muted); }
+  .links a:hover { color: var(--text); }
+  .small { padding: 8px 10px; font-size: 0.9rem; border-radius: 8px; }
+  

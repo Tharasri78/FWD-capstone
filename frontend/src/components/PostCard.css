@@ -1,0 +1,8 @@
+.post { display: grid; gap: 8px; }
+.post-head { display: flex; align-items: center; gap: 12px; }
+.author { font-weight: 700; }
+.post-title { margin: 8px 0 0; }
+.post-body { margin: 4px 0 0; white-space: pre-wrap; }
+.grow { flex: 1; }
+.comments { display: grid; gap: 10px; }
+.comment { display: flex; gap: 10px; align-items: flex-start; }

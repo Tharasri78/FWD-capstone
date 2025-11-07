@@ -1,0 +1,2 @@
+.notif-list { display: grid; gap: 12px; }
+.notif { padding: 12px; border: 1px solid var(--edge); border-radius: 10px; background: #0e1119; }

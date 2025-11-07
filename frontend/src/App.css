@@ -1,0 +1,88 @@
+:root {
+    --bg: #0f1115;
+    --panel: #161922;
+    --muted: #a9b1c3;
+    --text: #e8ecf3;
+    --primary: #6aa7ff;
+    --edge: #222737;
+    --danger: #ff6b6b;
+    --ok: #75d27d;
+  }
+  
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  
+  .input, .textarea, .btn, .select {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0d0f14;
+    color: var(--text);
+    border: 1px solid var(--edge);
+    border-radius: 10px;
+    outline: none;
+  }
+  
+  .input:focus, .textarea:focus { border-color: var(--primary); }
+  
+  .textarea { min-height: 120px; resize: vertical; }
+  
+  .btn {
+    cursor: pointer;
+    background: var(--primary);
+    color: #061022;
+    border: none;
+    font-weight: 600;
+  }
+  .btn.secondary { background: #2b3246; color: var(--text); }
+  .btn.danger { background: var(--danger); color: #260a0a; }
+  .btn.ok { background: var(--ok); color: #0c210f; }
+  
+  .row { display: flex; gap: 12px; }
+  .col { flex: 1; }
+  
+  .spaced { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .mute { color: var(--muted); font-size: 0.9rem; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-12 { margin-bottom: 12px; }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media (min-width: 900px) {
+    .grid-2 { grid-template-columns: 2fr 1fr; }
+  }
+  .avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: #2b3246; display: inline-block;
+  }
+  .tag {
+    display: inline-block; padding: 2px 8px; border: 1px solid var(--edge);
+    border-radius: 999px; color: var(--muted); font-size: 12px;
+  }
+  

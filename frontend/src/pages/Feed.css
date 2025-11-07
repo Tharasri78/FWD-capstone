@@ -1,0 +1,2 @@
+.feed .stack { display: grid; gap: 16px; }
+.col-span-2 { grid-column: 1 / -1; }
