@@ -3,12 +3,6 @@ import "./Notifications.css";
 import { fetchPosts } from "../services/posts";
 import { useAuth } from "../context/AuthContext";
 
-/*
-  Basic "fake" notifications derived from recent activity:
-  - If someone liked your post
-  - If someone commented on your post
-  (Because backend doesn't store notifications in a separate collection)
-*/
 export default function Notifications() {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
@@ -18,23 +12,43 @@ export default function Notifications() {
       const posts = await fetchPosts();
       const mine = posts.filter(p => p.author?._id === user._id);
       const notifs = [];
+      
       mine.forEach(p => {
+        // Likes notifications
         if (p.likes?.length) {
-          notifs.push({
-            type: "like",
-            text: `${p.likes.length} user(s) liked your post "${p.title}"`,
-            time: p.updatedAt || p.createdAt
+          p.likes.forEach(likeUserId => {
+            const liker = posts.find(post => post.author?._id === likeUserId)?.author;
+            notifs.push({
+              id: `like-${p._id}-${likeUserId}`, // Unique ID for each notification
+              type: "like",
+              text: `${liker?.username || 'Someone'} liked your post "${p.title}"`,
+              time: p.updatedAt || p.createdAt,
+              postId: p._id
+            });
           });
         }
+        
+        // Comments notifications
         if (p.comments?.length) {
-          notifs.push({
-            type: "comment",
-            text: `${p.comments.length} new comment(s) on "${p.title}"`,
-            time: p.updatedAt || p.createdAt
+          p.comments.forEach(comment => {
+            notifs.push({
+              id: `comment-${p._id}-${comment._id || comment.date}`, // Unique ID
+              type: "comment",
+              text: `${comment.user?.username || 'Someone'} commented: "${comment.text}"`,
+              time: comment.date || p.createdAt,
+              postId: p._id
+            });
           });
         }
       });
-      setItems(notifs.sort((a,b)=> new Date(b.time)-new Date(a.time)));
+      
+      setItems(notifs.sort((a,b) => new Date(b.time) - new Date(a.time)));
+      
+      // ✅ MARK ALL CURRENT NOTIFICATIONS AS READ
+      const readNotifications = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+      const currentNotificationIds = notifs.map(n => n.id);
+      const updatedReadNotifications = [...new Set([...readNotifications, ...currentNotificationIds])];
+      localStorage.setItem('readNotifications', JSON.stringify(updatedReadNotifications));
     };
     load();
   }, [user._id]);
@@ -46,7 +60,9 @@ export default function Notifications() {
         {items.length === 0 && <div className="mute">No activity yet.</div>}
         {items.map((n, idx) => (
           <div key={idx} className="notif">
-            <span className="tag">{n.type}</span>
+            <span className={`tag ${n.type === 'like' ? 'tag-like' : 'tag-comment'}`}>
+              {n.type}
+            </span>
             <div>{n.text}</div>
             <div className="mute" style={{fontSize:"12px"}}>
               {new Date(n.time).toLocaleString()}

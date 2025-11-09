@@ -11,4 +11,83 @@
   .links a { color: var(--muted); }
   .links a:hover { color: var(--text); }
   .small { padding: 8px 10px; font-size: 0.9rem; border-radius: 8px; }
+  .notification-link {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+.nav {
+  position: sticky; 
+  top: 0; 
+  z-index: 10;
+  background: #0b0d12; 
+  border-bottom: 1px solid var(--edge);
+}
+
+.nav-wrap {
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  padding: 10px 16px;
+}
+
+.brand { 
+  font-weight: 800; 
+  color: var(--text); 
+}
+
+.links { 
+  display: flex; 
+  align-items: center; 
+  gap: 16px; 
+}
+
+.links a { 
+  color: var(--muted); 
+}
+
+.links a:hover { 
+  color: var(--text); 
+}
+
+.small { 
+  padding: 8px 10px; 
+  font-size: 0.9rem; 
+  border-radius: 8px; 
+}
+
+/* Notification badge styles */
+.notification-link {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
   

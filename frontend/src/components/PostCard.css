@@ -1,8 +1,85 @@
-.post { display: grid; gap: 8px; }
-.post-head { display: flex; align-items: center; gap: 12px; }
-.author { font-weight: 700; }
-.post-title { margin: 8px 0 0; }
-.post-body { margin: 4px 0 0; white-space: pre-wrap; }
-.grow { flex: 1; }
-.comments { display: grid; gap: 10px; }
-.comment { display: flex; gap: 10px; align-items: flex-start; }
+.post { 
+  display: grid; 
+  gap: 8px; 
+}
+
+.post-head { 
+  display: flex; 
+  align-items: center; /* ✅ Good - centers vertically */
+  gap: 12px; 
+}
+
+.author { 
+  font-weight: 700; 
+}
+
+.post-title { 
+  margin: 8px 0 0; 
+}
+
+.post-body { 
+  margin: 4px 0 0; 
+  white-space: pre-wrap; 
+}
+
+.grow { 
+  flex: 1; 
+}
+
+.comments { 
+  display: grid; 
+  gap: 10px; 
+}
+
+.comment { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; /* ✅ CHANGED: Center align instead of flex-start */
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+  flex-shrink: 0;
+  border: 2px solid #444;
+  line-height: 1;
+}
+
+/* Different colors for different letters */
+.avatar[data-letter="A"],
+.avatar[data-letter="K"] { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); }
+
+.avatar[data-letter="B"],
+.avatar[data-letter="L"] { background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%); }
+
+.avatar[data-letter="C"],
+.avatar[data-letter="M"] { background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%); }
+
+.avatar[data-letter="D"],
+.avatar[data-letter="N"] { background: linear-gradient(135deg, #f368e0 0%, #ff9ff3 100%); }
+
+.avatar[data-letter="E"],
+.avatar[data-letter="O"] { background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%); }
+
+.avatar[data-letter="F"],
+.avatar[data-letter="P"] { background: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%); }
+
+.avatar[data-letter="G"],
+.avatar[data-letter="Q"] { background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%); }
+
+.avatar[data-letter="H"],
+.avatar[data-letter="R"] { background: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%); }
+
+.avatar[data-letter="I"],
+.avatar[data-letter="S"] { background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%); }
+
+.avatar[data-letter="J"],
+.avatar[data-letter="T"] { background: linear-gradient(135deg, #feca57 0%, #ff9f43 100%); }

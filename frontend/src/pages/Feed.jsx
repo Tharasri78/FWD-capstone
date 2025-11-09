@@ -7,6 +7,8 @@ export default function Feed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
   const load = async () => {
     try {
@@ -23,12 +25,18 @@ export default function Feed() {
 
   const newPost = async (e) => {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const payload = { title: form.get("title"), content: form.get("content") };
-    if (!payload.title || !payload.content) return;
-    const created = await createPost(payload);
-    setPosts([created, ...posts]);
-    e.currentTarget.reset();
+    if (!title || !content) return;
+    
+    try {
+      const created = await createPost({ title, content });
+      setPosts([created, ...posts]);
+      // Clear form fields
+      setTitle("");
+      setContent("");
+    } catch (err) {
+      console.error('Create post error:', err);
+      alert('Failed to create post: ' + (err.response?.data?.error || err.message));
+    }
   };
 
   const handleLikeUpdate = (updated) => {
@@ -45,8 +53,20 @@ export default function Feed() {
       <section className="card">
         <h3>Create Post</h3>
         <form className="mt-12" onSubmit={newPost}>
-          <input className="input mb-12" name="title" placeholder="Title" />
-          <textarea className="textarea mb-12" name="content" placeholder="Share something..." />
+          <input 
+            className="input mb-12" 
+            name="title" 
+            placeholder="Title" 
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea 
+            className="textarea mb-12" 
+            name="content" 
+            placeholder="Share something..." 
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
           <button className="btn">Publish</button>
         </form>
       </section>

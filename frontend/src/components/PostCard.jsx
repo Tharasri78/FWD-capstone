@@ -18,12 +18,19 @@ export default function PostCard({ post, onLike, onComment }) {
     e.currentTarget.reset();
   };
 
+  const getInitial = (username) => {
+    return username ? username.charAt(0).toUpperCase() : 'U';
+  };
+
   return (
     <article className="card post">
       <header className="post-head">
-        <div className="avatar" />
+        {/* ✅ MAKE SURE THE LETTER IS INSIDE THE AVATAR DIV */}
+        <div className="avatar" data-letter={getInitial(post.author?.username)}>
+          {getInitial(post.author?.username)} {/* ← THIS LINE MUST BE INSIDE */}
+        </div>
         <div>
-          <div className="author">{post.author?.username || "user"}</div>
+          <div className="author">{post.author?.username || "Loading..."}</div>
           <div className="mute">{new Date(post.createdAt).toLocaleString()}</div>
         </div>
         <div className="grow" />
@@ -46,9 +53,12 @@ export default function PostCard({ post, onLike, onComment }) {
       <div className="comments mt-12">
         {post.comments?.slice().reverse().map((c, i) => (
           <div key={i} className="comment">
-            <div className="avatar" />
+            {/* ✅ MAKE SURE THE LETTER IS INSIDE THE COMMENT AVATAR TOO */}
+            <div className="avatar" data-letter={getInitial(c.user?.username)}>
+              {getInitial(c.user?.username)} {/* ← THIS LINE MUST BE INSIDE */}
+            </div>
             <div>
-              <div className="author">{c.user?.username || "user"}</div>
+              <div className="author">{c.user?.username || "Loading..."}</div>
               <div>{c.text}</div>
               <div className="mute" style={{fontSize: "12px"}}>
                 {new Date(c.date || post.createdAt).toLocaleString()}

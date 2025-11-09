@@ -1,2 +1,32 @@
 .notif-list { display: grid; gap: 12px; }
 .notif { padding: 12px; border: 1px solid var(--edge); border-radius: 10px; background: #0e1119; }
+.notif-list { display: grid; gap: 12px; }
+.notif { 
+  padding: 12px; 
+  border: 1px solid var(--edge); 
+  border-radius: 10px; 
+  background: #0e1119;
+  transition: all 0.2s;
+}
+.notif:hover {
+  background: #1a1f2e;
+  border-color: #444;
+}
+
+/* Better color options - choose one: */
+
+/* Option 1: Subtle colors */
+.tag-like { background: #2a4d3a; color: #8bc34a; border: 1px solid #3a5d4a; }
+.tag-comment { background: #2d3a4d; color: #64b5f6; border: 1px solid #3d4a5d; }
+
+/* Option 2: Monochromatic */
+.tag-like { background: #333; color: #4CAF50; border: 1px solid #444; }
+.tag-comment { background: #333; color: #2196F3; border: 1px solid #444; }
+
+/* Option 3: Dark theme friendly */
+.tag-like { background: #1a1f2e; color: #4ade80; border: 1px solid #2a3a4a; }
+.tag-comment { background: #1a1f2e; color: #60a5fa; border: 1px solid #2a3a5a; }
+
+/* Option 4: Minimal - just borders */
+.tag-like { background: transparent; color: #4ade80; border: 1px solid #4ade80; }
+.tag-comment { background: transparent; color: #60a5fa; border: 1px solid #60a5fa; }

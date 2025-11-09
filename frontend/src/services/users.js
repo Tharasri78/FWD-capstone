@@ -1,11 +1,16 @@
 import api from "./api";
 
-export const getProfile = async (id) => {
-  const { data } = await api.get(`/api/users/${id}`);
+export const followUser = async (userId) => {
+  const { data } = await api.put(`/api/users/${userId}/follow`);
   return data;
 };
 
-export const followUser = async (id, currentUserId) => {
-  const { data } = await api.put(`/api/users/${id}/follow`, { userId: currentUserId });
+export const checkIsFollowing = async (userId) => {
+  const { data } = await api.get(`/api/users/${userId}/is-following`);
+  return data;
+};
+
+export const getProfile = async (userId) => {
+  const { data } = await api.get(`/api/users/${userId}`);
   return data;
 };
