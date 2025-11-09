@@ -1,12 +1,24 @@
-import api from "./api";
+// services/auth.js
+const API_URL = 'http://localhost:5000/api'; // Add this line
 
-export const register = async (payload) => {
-  const { data } = await api.post("/api/auth/register", payload);
-  return data;
+export const login = async (email, password) => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
+  return await response.json();
 };
 
-export const loginApi = async (payload) => {
-  const { data } = await api.post("/api/auth/login", payload);
-  // returns { token, user }
-  return data;
+export const register = async (username, email, password) => {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, email, password }),
+  });
+  return await response.json();
 };

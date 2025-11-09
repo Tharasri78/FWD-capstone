@@ -1,16 +1,30 @@
-import api from "./api";
+// services/users.js
+const API_URL = 'http://localhost:5000/api'; // Add this line
 
-export const followUser = async (userId) => {
-  const { data } = await api.put(`/api/users/${userId}/follow`);
-  return data;
-};
-
-export const checkIsFollowing = async (userId) => {
-  const { data } = await api.get(`/api/users/${userId}/is-following`);
-  return data;
+const getToken = () => {
+  return localStorage.getItem('token');
 };
 
 export const getProfile = async (userId) => {
-  const { data } = await api.get(`/api/users/${userId}`);
-  return data;
+  const response = await fetch(`${API_URL}/users/${userId}`);
+  return await response.json();
+};
+
+export const followUser = async (userId) => {
+  const response = await fetch(`${API_URL}/users/${userId}/follow`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${getToken()}`,
+    },
+  });
+  return await response.json();
+};
+
+export const checkIsFollowing = async (userId) => {
+  const response = await fetch(`${API_URL}/users/${userId}/is-following`, {
+    headers: {
+      'Authorization': `Bearer ${getToken()}`,
+    },
+  });
+  return await response.json();
 };

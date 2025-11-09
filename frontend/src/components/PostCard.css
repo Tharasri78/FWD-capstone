@@ -1,3 +1,7 @@
+/* ===============================
+   POST CARD BASE LAYOUT
+================================== */
+
 .post { 
   display: grid; 
   gap: 8px; 
@@ -5,7 +9,7 @@
 
 .post-head { 
   display: flex; 
-  align-items: center; /* ✅ Good - centers vertically */
+  align-items: center;
   gap: 12px; 
 }
 
@@ -13,9 +17,14 @@
   font-weight: 700; 
 }
 
-.post-title { 
-  margin: 8px 0 0; 
+.post-title {
+  color: #ffffff;           /* bright white */
+  font-weight: 800;         /* strong bold */
+  font-size: 1.25rem;       /* bigger to stand out */
+  letter-spacing: 0.3px;    /* slight crisp effect */
+  margin-top: 8px;
 }
+
 
 .post-body { 
   margin: 4px 0 0; 
@@ -26,60 +35,316 @@
   flex: 1; 
 }
 
+
+/* ===============================
+   COMMENTS SECTION
+================================== */
+
 .comments { 
   display: grid; 
   gap: 10px; 
 }
 
-.comment { 
-  display: flex; 
-  gap: 10px; 
-  align-items: center; /* ✅ CHANGED: Center align instead of flex-start */
+.comment {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s ease;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
+.comment:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.comment-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-text {
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.comment-time {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+
+/* ===============================
+   AVATARS (POST + COMMENT)
+================================== */
+
+.post-avatar,
+.comment-avatar,
+.reply-avatar {
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 16px;
   color: white;
-  flex-shrink: 0;
-  border: 2px solid #444;
   line-height: 1;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Different colors for different letters */
-.avatar[data-letter="A"],
-.avatar[data-letter="K"] { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); }
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  border: 2px solid #444;
+}
 
-.avatar[data-letter="B"],
-.avatar[data-letter="L"] { background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%); }
+.comment-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  border: 2px solid #444;
+}
 
-.avatar[data-letter="C"],
-.avatar[data-letter="M"] { background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%); }
+.reply-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  border: 1px solid #444;
+}
 
-.avatar[data-letter="D"],
-.avatar[data-letter="N"] { background: linear-gradient(135deg, #f368e0 0%, #ff9ff3 100%); }
+.post-avatar::before,
+.comment-avatar::before,
+.reply-avatar::before {
+  content: attr(data-letter);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
-.avatar[data-letter="E"],
-.avatar[data-letter="O"] { background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%); }
 
-.avatar[data-letter="F"],
-.avatar[data-letter="P"] { background: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%); }
+/* ===============================
+   GRADIENT COLORS PER LETTER
+================================== */
 
-.avatar[data-letter="G"],
-.avatar[data-letter="Q"] { background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%); }
+.post-avatar[data-letter="A"], .post-avatar[data-letter="K"],
+.comment-avatar[data-letter="A"], .comment-avatar[data-letter="K"] {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+}
 
-.avatar[data-letter="H"],
-.avatar[data-letter="R"] { background: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%); }
+.post-avatar[data-letter="B"], .post-avatar[data-letter="L"],
+.comment-avatar[data-letter="B"], .comment-avatar[data-letter="L"] {
+  background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+}
 
-.avatar[data-letter="I"],
-.avatar[data-letter="S"] { background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%); }
+.post-avatar[data-letter="C"], .post-avatar[data-letter="M"],
+.comment-avatar[data-letter="C"], .comment-avatar[data-letter="M"] {
+  background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%);
+}
 
-.avatar[data-letter="J"],
-.avatar[data-letter="T"] { background: linear-gradient(135deg, #feca57 0%, #ff9f43 100%); }
+.post-avatar[data-letter="D"], .post-avatar[data-letter="N"],
+.comment-avatar[data-letter="D"], .comment-avatar[data-letter="N"] {
+  background: linear-gradient(135deg, #f368e0 0%, #ff9ff3 100%);
+}
+
+.post-avatar[data-letter="E"], .post-avatar[data-letter="O"],
+.comment-avatar[data-letter="E"], .comment-avatar[data-letter="O"] {
+  background: linear-gradient(135deg, #ff9f43 0%, #feca57 100%);
+}
+
+.post-avatar[data-letter="F"], .post-avatar[data-letter="P"],
+.comment-avatar[data-letter="F"], .comment-avatar[data-letter="P"] {
+  background: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%);
+}
+
+.post-avatar[data-letter="G"], .post-avatar[data-letter="Q"],
+.comment-avatar[data-letter="G"], .comment-avatar[data-letter="Q"] {
+  background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);
+}
+
+.post-avatar[data-letter="H"], .post-avatar[data-letter="R"],
+.comment-avatar[data-letter="H"], .comment-avatar[data-letter="R"] {
+  background: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%);
+}
+
+.post-avatar[data-letter="I"], .post-avatar[data-letter="S"],
+.comment-avatar[data-letter="I"], .comment-avatar[data-letter="S"] {
+  background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%);
+}
+
+.post-avatar[data-letter="J"], .post-avatar[data-letter="T"],
+.comment-avatar[data-letter="J"], .comment-avatar[data-letter="T"] {
+  background: linear-gradient(135deg, #feca57 0%, #ff9f43 100%);
+}
+
+
+/* ===============================
+   REPLY SECTION
+================================== */
+
+.reply-section {
+  padding-top: 12px;
+  border-top: 1px solid var(--edge);
+}
+
+.reply {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.01);
+  border-radius: 6px;
+  border-left: 3px solid var(--primary);
+}
+
+.reply-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.reply-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.reply-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+
+
+/* ===============================
+   POST ACTIONS (EDIT/DELETE)
+================================== */
+
+.post-actions {
+  display: flex;
+  gap: 8px;
+  margin-right: 12px;
+}
+
+.post-actions .btn.small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.btn.danger {
+  background: #dc3545;
+}
+
+.btn.danger:hover {
+  background: #c82333;
+}
+
+
+/* ===============================
+   DELETE COMMENT BUTTON
+================================== */
+
+.delete-comment-btn {
+  background: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 2px 6px;
+  font-size: 11px;
+  margin-left: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.delete-comment-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-comment-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+
+/* ===============================
+   PREMIUM GLASS VIEW PROFILE BUTTON
+================================== */
+
+.view-profile-glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f6b17a;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
+.view-profile-glass:hover {
+  background: rgba(246, 177, 122, 0.15);
+  color: #fff;
+  transform: translateY(-1px);
+}
+/* Image upload styles */
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-input {
+  display: none;
+}
+
+.image-preview {
+  position: relative;
+  margin-top: 12px;
+}
+
+.image-preview img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Post image display */
+.post-image {
+  margin: 12px 0;
+}
+
+.post-image-content {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--edge);
+}

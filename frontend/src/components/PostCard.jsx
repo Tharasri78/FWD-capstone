@@ -1,71 +1,250 @@
-import React from "react";
+import React, { useState } from "react";
 import "./PostCard.css";
-import { likePost } from "../services/posts";
+import { likePost, commentOnPost, deletePost, editPost } from "../services/posts";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-export default function PostCard({ post, onLike, onComment }) {
+export default function PostCard({ post, onLike, onComment, onDelete, onEdit, onDeleteComment }) {
+  const [commentText, setCommentText] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(post.title);
+  const [editContent, setEditContent] = useState(post.content);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
+
+  const { user: currentUser } = useAuth();
+
+  const getInitial = (username) => {
+    if (!username || typeof username !== "string" || username.trim() === "") return "U";
+    return username.charAt(0).toUpperCase();
+  };
+
   const handleLike = async () => {
-    const updated = await likePost(post._id);
-    onLike(updated);
+    try {
+      const updated = await likePost(post._id);
+      onLike(updated);
+    } catch (error) {
+      console.error("Error liking post:", error);
+      alert("Failed to like post");
+    }
   };
 
   const handleComment = async (e) => {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const text = form.get("text").trim();
+    const text = commentText.trim();
     if (!text) return;
-    await onComment(post._id, text);
-    e.currentTarget.reset();
+
+    setCommentLoading(true);
+    try {
+      await onComment(post._id, text);
+      setCommentText("");
+    } catch (error) {
+      console.error("Error commenting:", error);
+      alert("Failed to post comment: " + (error.response?.data?.error || error.message));
+    } finally {
+      setCommentLoading(false);
+    }
   };
 
-  const getInitial = (username) => {
-    return username ? username.charAt(0).toUpperCase() : 'U';
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+
+    setDeletingCommentId(commentId);
+    try {
+      await onDeleteComment(post._id, commentId);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      alert("Failed to delete comment: " + (error.response?.data?.error || error.message));
+    } finally {
+      setDeletingCommentId(null);
+    }
   };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    setIsDeleting(true);
+    try {
+      await deletePost(post._id);
+      if (onDelete) onDelete(post._id);
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("Failed to delete post: " + (error.response?.data?.error || error.message));
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleEdit = async () => {
+    if (!editTitle.trim() || !editContent.trim()) {
+      alert("Title and content cannot be empty");
+      return;
+    }
+
+    try {
+      const updated = await editPost(post._id, {
+        title: editTitle,
+        content: editContent,
+      });
+      if (onEdit) onEdit(updated);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error editing post:", error);
+      alert("Failed to edit post: " + (error.response?.data?.error || error.message));
+    }
+  };
+
+  const isPostAuthor = currentUser && post.author && post.author._id === currentUser._id;
+
+  const postAuthor = post.author || {};
+  const postComments = post.comments || [];
 
   return (
     <article className="card post">
-      <header className="post-head">
-        {/* ✅ MAKE SURE THE LETTER IS INSIDE THE AVATAR DIV */}
-        <div className="avatar" data-letter={getInitial(post.author?.username)}>
-          {getInitial(post.author?.username)} {/* ← THIS LINE MUST BE INSIDE */}
-        </div>
+
+      {/* FIXED — Proper header spacing + glass view-profile */}
+      <header className="post-head spaced">
+        <div className="post-avatar" data-letter={getInitial(postAuthor.username)}></div>
         <div>
-          <div className="author">{post.author?.username || "Loading..."}</div>
+          <div className="author">{postAuthor.username || "Loading..."}</div>
           <div className="mute">{new Date(post.createdAt).toLocaleString()}</div>
         </div>
+
         <div className="grow" />
-        <Link className="tag" to={`/profile/${post.author?._id || ""}`}>View Profile</Link>
+
+        {isPostAuthor && (
+          <div className="post-actions">
+            <button
+              className="btn small secondary"
+              onClick={() => setIsEditing(!isEditing)}
+              disabled={isDeleting}
+            >
+              {isEditing ? "Cancel" : "Edit"}
+            </button>
+            <button
+              className="btn small danger"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        )}
+
+        <Link className="view-profile-glass" to={`/profile/${postAuthor._id || ""}`}>
+          View Profile
+        </Link>
       </header>
 
-      <h3 className="post-title">{post.title}</h3>
-      <p className="post-body">{post.content}</p>
+      {isEditing ? (
+        <div className="edit-form">
+          <input
+            className="input mb-8"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            placeholder="Post title"
+          />
+          <textarea
+            className="textarea mb-8"
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            placeholder="Post content"
+            rows="4"
+          />
+          <div className="row">
+            <button className="btn" onClick={handleEdit}>
+              Save Changes
+            </button>
+            <button
+              className="btn secondary"
+              onClick={() => {
+                setIsEditing(false);
+                setEditTitle(post.title);
+                setEditContent(post.content);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <h3 className="post-title">{post.title}</h3>
+          <p className="post-body">{post.content}</p>
+          
+          {/* ADD THIS SECTION FOR IMAGE DISPLAY */}
+          {post.image && post.image.url && (
+            <div className="post-image">
+              <img 
+                src={`http://localhost:5000${post.image.url}`} 
+                alt="Post image" 
+                className="post-image-content"
+              />
+            </div>
+          )}
+        </>
+      )}
 
       <div className="spaced mt-12">
-        <button className="btn secondary" onClick={handleLike}>❤️ {post.likes?.length || 0}</button>
-        <div className="mute">{post.comments?.length || 0} comments</div>
+        <button className="btn secondary" onClick={handleLike}>
+          ❤️ {post.likes?.length || 0}
+        </button>
+        <div className="mute">{postComments.length} comments</div>
       </div>
 
       <form className="row mt-12" onSubmit={handleComment}>
-        <input className="input" name="text" placeholder="Write a comment..." />
-        <button className="btn" type="submit">Comment</button>
+        <input
+          className="input"
+          placeholder="Write a comment..."
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
+          disabled={commentLoading}
+        />
+        <button className="btn" type="submit" disabled={commentLoading}>
+          {commentLoading ? "Posting..." : "Comment"}
+        </button>
       </form>
 
       <div className="comments mt-12">
-        {post.comments?.slice().reverse().map((c, i) => (
-          <div key={i} className="comment">
-            {/* ✅ MAKE SURE THE LETTER IS INSIDE THE COMMENT AVATAR TOO */}
-            <div className="avatar" data-letter={getInitial(c.user?.username)}>
-              {getInitial(c.user?.username)} {/* ← THIS LINE MUST BE INSIDE */}
-            </div>
-            <div>
-              <div className="author">{c.user?.username || "Loading..."}</div>
-              <div>{c.text}</div>
-              <div className="mute" style={{fontSize: "12px"}}>
-                {new Date(c.date || post.createdAt).toLocaleString()}
+        {postComments.slice().reverse().map((c, i) => {
+          const commentUser = c.user || {};
+          const isCommentAuthor = currentUser && commentUser._id === currentUser._id;
+
+          return (
+            <div key={i} className="comment">
+              <div className="comment-avatar" data-letter={getInitial(commentUser.username)}></div>
+              <div className="comment-content">
+                <div className="comment-header">
+                  <span className="author">{commentUser.username || "Loading..."}</span>
+
+                  {/* FIXED — replace comment-profile-link with glass style */}
+                  <Link
+                    to={`/profile/${commentUser._id || ""}`}
+                    className="view-profile-glass"
+                  >
+                    View Profile
+                  </Link>
+
+                  {isCommentAuthor && (
+                    <button
+                      className="delete-comment-btn"
+                      onClick={() => handleDeleteComment(c._id)}
+                      disabled={deletingCommentId === c._id}
+                    >
+                      {deletingCommentId === c._id ? "..." : "Delete Comment"}
+                    </button>
+                  )}
+                </div>
+
+                <div className="comment-text">{c.text}</div>
+                <div className="comment-time">
+                  {new Date(c.date || post.createdAt).toLocaleString()}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </article>
   );

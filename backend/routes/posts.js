@@ -1,6 +1,8 @@
 const express = require("express");
 const Post = require("../models/Post");
 const jwt = require("jsonwebtoken");
+const upload = require('../middleware/upload');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -36,19 +38,33 @@ const populatePost = (postId) => {
     .populate("comments.user", "username");
 };
 
-// Create post
-router.post("/", authMiddleware, async (req, res) => {
+// Create post WITH IMAGE UPLOAD
+router.post("/", authMiddleware, upload.single('image'), async (req, res) => {
   try {
-    const post = new Post({
+    const postData = {
       author: req.userId,
       title: req.body.title,
       content: req.body.content,
-    });
+    };
+
+    // If image was uploaded
+    if (req.file) {
+      postData.image = {
+        url: `/uploads/${req.file.filename}`,
+        filename: req.file.filename
+      };
+    }
+
+    const post = new Post(postData);
     await post.save();
     
     const populatedPost = await populatePost(post._id);
     res.json(populatedPost);
   } catch (err) {
+    // Delete uploaded file if error occurs
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
     res.status(500).json({ error: err.message });
   }
 });
@@ -91,6 +107,76 @@ router.post("/:id/comment", authMiddleware, async (req, res) => {
     const populatedPost = await populatePost(req.params.id);
     res.json(populatedPost);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete post
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    
+    // Check if user owns the post
+    if (post.author.toString() !== req.userId) {
+      return res.status(403).json({ error: "You can only delete your own posts" });
+    }
+    
+    await Post.findByIdAndDelete(req.params.id);
+    res.json({ message: "Post deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Edit post
+router.put("/:id", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    
+    // Check if user owns the post
+    if (post.author.toString() !== req.userId) {
+      return res.status(403).json({ error: "You can only edit your own posts" });
+    }
+    
+    post.title = req.body.title || post.title;
+    post.content = req.body.content || post.content;
+    await post.save();
+    
+    const populatedPost = await populatePost(req.params.id);
+    res.json(populatedPost);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete comment
+router.delete("/:postId/comment/:commentId", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    const comment = post.comments.id(req.params.commentId);
+    
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    // Check if user owns the comment or the post
+    if (comment.user.toString() !== req.userId && post.author.toString() !== req.userId) {
+      return res.status(403).json({ error: "You can only delete your own comments" });
+    }
+
+    // Remove the comment
+    post.comments.pull(req.params.commentId);
+    await post.save();
+    
+    const populatedPost = await populatePost(req.params.postId);
+    res.json(populatedPost);
+  } catch (err) {
+    console.error('Delete comment error:', err);
     res.status(500).json({ error: err.message });
   }
 });

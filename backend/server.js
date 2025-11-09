@@ -12,6 +12,8 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
+// Add this line to serve uploaded images
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use("/api/auth", authRoutes);
