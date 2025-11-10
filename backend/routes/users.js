@@ -2,6 +2,8 @@ const express = require("express");
 const User = require("../models/User");
 const Notification = require("../models/Notification");
 const jwt = require("jsonwebtoken");
+const upload = require('../middleware/upload');
+const bcrypt = require('bcryptjs');
 
 const router = express.Router();
 
@@ -19,6 +21,66 @@ function authMiddleware(req, res, next) {
     next();
   });
 }
+
+// Update user profile
+router.put("/profile", authMiddleware, upload.single('profilePicture'), async (req, res) => {
+  try {
+    const { username, bio, currentPassword, newPassword } = req.body;
+    const updateData = {};
+
+    // Check if username is provided and not taken by another user
+    if (username) {
+      const existingUser = await User.findOne({ 
+        username, 
+        _id: { $ne: req.userId } 
+      });
+      
+      if (existingUser) {
+        return res.status(400).json({ error: "Username already taken" });
+      }
+      updateData.username = username;
+    }
+
+    if (bio !== undefined) {
+      updateData.bio = bio;
+    }
+
+    // Handle password change
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ error: "Current password is required to change password" });
+      }
+      
+      const user = await User.findById(req.userId);
+      const validPassword = await bcrypt.compare(currentPassword, user.password);
+      
+      if (!validPassword) {
+        return res.status(400).json({ error: "Current password is incorrect" });
+      }
+      
+      updateData.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    // Handle profile picture upload
+    if (req.file) {
+      updateData.profilePicture = {
+        url: `/uploads/${req.file.filename}`,
+        filename: req.file.filename
+      };
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.userId,
+      updateData,
+      { new: true }
+    ).select('-password').populate("followers", "username").populate("following", "username");
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error('Profile update error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Follow user
 router.put("/:id/follow", authMiddleware, async (req, res) => {

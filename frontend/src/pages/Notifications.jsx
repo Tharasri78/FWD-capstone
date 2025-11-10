@@ -2,56 +2,99 @@ import React, { useEffect, useState } from "react";
 import "./Notifications.css";
 import { fetchPosts } from "../services/posts";
 import { useAuth } from "../context/AuthContext";
+import { getProfile } from "../services/users";
 
 export default function Notifications() {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      const posts = await fetchPosts();
-      const mine = posts.filter(p => p.author?._id === user._id);
-      const notifs = [];
+      if (!user) return;
       
-      mine.forEach(p => {
-        // Likes notifications
-        if (p.likes?.length) {
-          p.likes.forEach(likeUserId => {
-            const liker = posts.find(post => post.author?._id === likeUserId)?.author;
-            notifs.push({
-              id: `like-${p._id}-${likeUserId}`, // Unique ID for each notification
-              type: "like",
-              text: `${liker?.username || 'Someone'} liked your post "${p.title}"`,
-              time: p.updatedAt || p.createdAt,
-              postId: p._id
-            });
-          });
-        }
+      try {
+        const [posts, userProfile] = await Promise.all([
+          fetchPosts(),
+          getProfile(user._id)
+        ]);
+
+        const mine = posts.filter(p => p.author?._id === user._id);
+        const notifs = [];
         
-        // Comments notifications
-        if (p.comments?.length) {
-          p.comments.forEach(comment => {
+        // 1. Follow notifications - check new followers
+        if (userProfile.followers?.length) {
+          userProfile.followers.forEach(followerId => {
+            const follower = posts.find(post => post.author?._id === followerId)?.author;
             notifs.push({
-              id: `comment-${p._id}-${comment._id || comment.date}`, // Unique ID
-              type: "comment",
-              text: `${comment.user?.username || 'Someone'} commented: "${comment.text}"`,
-              time: comment.date || p.createdAt,
-              postId: p._id
+              id: `follow-${followerId}-${user._id}`,
+              type: "follow",
+              text: `${follower?.username || 'Someone'} started following you`,
+              time: new Date().toISOString(), // You might want to store actual follow time in your backend
+              userId: followerId
             });
           });
         }
-      });
-      
-      setItems(notifs.sort((a,b) => new Date(b.time) - new Date(a.time)));
-      
-      // ✅ MARK ALL CURRENT NOTIFICATIONS AS READ
-      const readNotifications = JSON.parse(localStorage.getItem('readNotifications') || '[]');
-      const currentNotificationIds = notifs.map(n => n.id);
-      const updatedReadNotifications = [...new Set([...readNotifications, ...currentNotificationIds])];
-      localStorage.setItem('readNotifications', JSON.stringify(updatedReadNotifications));
+
+        // 2. Likes notifications
+        mine.forEach(p => {
+          if (p.likes?.length) {
+            p.likes.forEach(likeUserId => {
+              const liker = posts.find(post => post.author?._id === likeUserId)?.author;
+              notifs.push({
+                id: `like-${p._id}-${likeUserId}`,
+                type: "like",
+                text: `${liker?.username || 'Someone'} liked your post "${p.title}"`,
+                time: p.updatedAt || p.createdAt,
+                postId: p._id
+              });
+            });
+          }
+        });
+        
+        // 3. Comments notifications
+        mine.forEach(p => {
+          if (p.comments?.length) {
+            p.comments.forEach(comment => {
+              notifs.push({
+                id: `comment-${p._id}-${comment._id || comment.date}`,
+                type: "comment",
+                text: `${comment.user?.username || 'Someone'} commented: "${comment.text}"`,
+                time: comment.date || p.createdAt,
+                postId: p._id
+              });
+            });
+          }
+        });
+
+        // Sort by time (newest first)
+        const sortedNotifs = notifs.sort((a, b) => new Date(b.time) - new Date(a.time));
+        setItems(sortedNotifs);
+
+        // Mark current notifications as read
+        const readNotifications = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+        const currentNotificationIds = notifs.map(n => n.id);
+        const updatedReadNotifications = [...new Set([...readNotifications, ...currentNotificationIds])];
+        localStorage.setItem('readNotifications', JSON.stringify(updatedReadNotifications));
+
+      } catch (error) {
+        console.error('Error loading notifications:', error);
+      } finally {
+        setLoading(false);
+      }
     };
+    
     load();
-  }, [user._id]);
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="card">
+        <h3>Your Notifications</h3>
+        <div className="mute">Loading notifications...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="card">
@@ -59,13 +102,15 @@ export default function Notifications() {
       <div className="notif-list mt-12">
         {items.length === 0 && <div className="mute">No activity yet.</div>}
         {items.map((n, idx) => (
-          <div key={idx} className="notif">
-            <span className={`tag ${n.type === 'like' ? 'tag-like' : 'tag-comment'}`}>
+          <div key={`${n.id}-${idx}`} className="notif">
+            <span className={`tag ${n.type === 'like' ? 'tag-like' : n.type === 'comment' ? 'tag-comment' : 'tag-follow'}`}>
               {n.type}
             </span>
-            <div>{n.text}</div>
-            <div className="mute" style={{fontSize:"12px"}}>
-              {new Date(n.time).toLocaleString()}
+            <div className="notif-content">
+              <div className="notif-text">{n.text}</div>
+              <div className="mute notif-time">
+                {new Date(n.time).toLocaleString()}
+              </div>
             </div>
           </div>
         ))}

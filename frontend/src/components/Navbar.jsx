@@ -3,25 +3,40 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { useAuth } from "../context/AuthContext";
 import { fetchPosts } from "../services/posts";
+import { getProfile } from "../services/users";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [notificationCount, setNotificationCount] = useState(0);
 
-  // Fetch notifications count
+  // Fetch notifications count - including follow notifications
   const loadNotifications = async () => {
     if (!user) return;
     
     try {
-      const posts = await fetchPosts();
+      const [posts, userProfile] = await Promise.all([
+        fetchPosts(),
+        getProfile(user._id)
+      ]);
+
       const myPosts = posts.filter(p => p.author?._id === user._id);
       const readNotifications = JSON.parse(localStorage.getItem('readNotifications') || '[]');
       
       let newNotificationCount = 0;
       
+      // Check for new followers
+      if (userProfile.followers?.length) {
+        userProfile.followers.forEach(followerId => {
+          const notificationId = `follow-${followerId}-${user._id}`;
+          if (!readNotifications.includes(notificationId)) {
+            newNotificationCount++;
+          }
+        });
+      }
+      
+      // Check likes on your posts
       myPosts.forEach(post => {
-        // Check likes
         if (post.likes?.length) {
           post.likes.forEach(likeUserId => {
             const notificationId = `like-${post._id}-${likeUserId}`;
@@ -31,7 +46,7 @@ export default function Navbar() {
           });
         }
         
-        // Check comments
+        // Check comments on your posts
         if (post.comments?.length) {
           post.comments.forEach(comment => {
             const notificationId = `comment-${post._id}-${comment._id || comment.date}`;
@@ -49,17 +64,9 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    if (user) {
-      loadNotifications();
-    }
-    
+    loadNotifications();
     // Refresh notifications every 30 seconds
-    const interval = setInterval(() => {
-      if (user) {
-        loadNotifications();
-      }
-    }, 30000);
-    
+    const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -72,17 +79,11 @@ export default function Navbar() {
     <header className="nav">
       <div className="nav-wrap container">
         <Link to={user ? "/feed" : "/"} className="brand">MERN Blog</Link>
-        
         <nav className="links">
           {user ? (
             <>
               <Link to="/feed">Feed</Link>
-              
-              {/* Direct link to Trending Page */}
-              <Link to="/trending" className="trending-link">
-                Trending
-              </Link>
-              
+              <Link to="/trending">🔥 Trending</Link>
               <Link to={`/profile/${user._id}`}>Profile</Link>
               <Link to="/notifications" className="notification-link">
                 Notifications
