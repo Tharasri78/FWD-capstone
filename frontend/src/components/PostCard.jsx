@@ -220,7 +220,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
           {post.image && post.image.url && (
             <div className="post-image">
               <img 
-                src={`http://localhost:5000${post.image.url}`} 
+src={`${import.meta.env.VITE_API_URL}${post.image.url}`}
                 alt="Post image" 
                 className="post-image-content"
               />

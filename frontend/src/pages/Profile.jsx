@@ -190,7 +190,7 @@ export default function Profile() {
                 <div className="avatar-large" data-letter={getInitial(editForm.username)}>
                   {profile.profilePicture?.url && (
                     <img 
-                      src={`http://localhost:5000${profile.profilePicture.url}`} 
+  src={`${import.meta.env.VITE_API_URL}${profile.profilePicture.url}`} 
                       alt="Profile" 
                       className="avatar-preview"
                     />
