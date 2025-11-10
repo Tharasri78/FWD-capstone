@@ -405,7 +405,6 @@
 /* ===============================
    SHARE BUTTON STYLES
 ================================== */
-
 .share-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -422,6 +421,7 @@
   align-items: center;
   gap: 6px;
   height: 32px;
+  margin-left: 8px; /* Add this to create space between Comment and Share */
 }
 
 .share-btn:hover {
@@ -435,22 +435,81 @@
   transform: translateY(0);
 }
 
-/* If you want it to match your view-profile-glass button exactly */
-.share-btn.glass {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #f6b17a;
-  font-size: 0.85rem;
-  padding: 6px 14px;
-  border-radius: 10px;
-  backdrop-filter: blur(6px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
+/* Horizontal comment form layout */
+.comment-form-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
 }
 
-.share-btn.glass:hover {
-  background: rgba(246, 177, 122, 0.15);
-  color: #fff;
+.comment-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: #f6b17a;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.comment-actions-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-btn {
+  background: #f6b17a;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  height: 32px;
+}
+
+.comment-btn:hover {
+  background: #e5a06d;
   transform: translateY(-1px);
+}
+
+.comment-btn:disabled {
+  background: #8b6b4d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.share-dropdown-horizontal {
+  position: absolute;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  margin-top: 45px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .comment-form-horizontal {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .comment-actions-horizontal {
+    justify-content: space-between;
+  }
 }

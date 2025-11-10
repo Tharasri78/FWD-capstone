@@ -83,7 +83,7 @@ export default function Navbar() {
           {user ? (
             <>
               <Link to="/feed">Feed</Link>
-              <Link to="/trending">🔥 Trending</Link>
+              <Link to="/trending">Trending</Link>
               <Link to={`/profile/${user._id}`}>Profile</Link>
               <Link to="/notifications" className="notification-link">
                 Notifications
