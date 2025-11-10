@@ -1,5 +1,5 @@
 // services/posts.js
-const API_URL = import.meta.env.VITE_API_URL + "/api";
+const API_URL = "http://localhost:5000/api";
 
 // Get token function
 const getToken = () => {

@@ -1,14 +1,13 @@
 import axios from "axios";
-import { getBaseURL } from "./base";
 
 const api = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: "http://localhost:5000/api",
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`; // ← MUST have Bearer prefix
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });

@@ -8,177 +8,180 @@ const router = express.Router();
 
 // Middleware to check token
 function authMiddleware(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  
-  if (!authHeader) {
-    return res.status(401).json({ error: "No authorization header" });
-  }
+const authHeader = req.headers["authorization"];
 
-  const token = authHeader.startsWith('Bearer ') 
-    ? authHeader.slice(7) 
-    : authHeader;
+if (!authHeader) {
+return res.status(401).json({ error: "No authorization header" });
+}
 
-  if (!token) {
-    return res.status(401).json({ error: "No token" });
-  }
+const token = authHeader.startsWith('Bearer ')
+? authHeader.slice(7)
+: authHeader;
 
-  jwt.verify(token, "secretkey", (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ error: "Invalid token" });
-    }
-    req.userId = decoded.id;
-    next();
-  });
+if (!token) {
+return res.status(401).json({ error: "No token" });
+}
+
+jwt.verify(token, "secretkey", (err, decoded) => {
+if (err) {
+
+return res.status(401).json({ error: "Invalid token" });
+}
+req.userId = decoded.id;
+next();
+});
 }
 
 // Helper function to populate post data
 const populatePost = (postId) => {
-  return Post.findById(postId)
-    .populate("author", "username")
-    .populate("comments.user", "username");
+return Post.findById(postId)
+.populate("author", "username")
+.populate("comments.user", "username");
 };
 
 // Create post WITH IMAGE UPLOAD
 router.post("/", authMiddleware, upload.single('image'), async (req, res) => {
-  try {
-    const postData = {
-      author: req.userId,
-      title: req.body.title,
-      content: req.body.content,
-    };
+try {
+const postData = {
+author: req.userId,
+title: req.body.title,
+content: req.body.content,
+};
 
-    // If image was uploaded
-    if (req.file) {
-      postData.image = {
-        url: `/uploads/${req.file.filename}`,
-        filename: req.file.filename
-      };
-    }
+// If image was uploaded
+if (req.file) {
+postData.image = {
+url: `/uploads/${req.file.filename}`,
+filename: req.file.filename
+};
+}
 
-    const post = new Post(postData);
-    await post.save();
-    
-    const populatedPost = await populatePost(post._id);
-    res.json(populatedPost);
-  } catch (err) {
-    // Delete uploaded file if error occurs
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
-    res.status(500).json({ error: err.message });
-  }
+const post = new Post(postData);
+await post.save();
+
+const populatedPost = await populatePost(post._id);
+
+res.json(populatedPost);
+} catch (err) {
+// Delete uploaded file if error occurs
+if (req.file) {
+fs.unlinkSync(req.file.path);
+}
+res.status(500).json({ error: err.message });
+}
 });
 
 // Get all posts
 router.get("/", async (req, res) => {
-  try {
-    const posts = await Post.find()
-      .populate("author", "username")
-      .populate("comments.user", "username");
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+try {
+const posts = await Post.find()
+.populate("author", "username")
+.populate("comments.user", "username");
+res.json(posts);
+} catch (err) {
+res.status(500).json({ error: err.message });
+}
 });
 
 // Like post
 router.put("/:id/like", authMiddleware, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.userId)) {
-      post.likes.push(req.userId);
-    }
-    await post.save();
-    
-    const populatedPost = await populatePost(req.params.id);
-    res.json(populatedPost);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+try {
+const post = await Post.findById(req.params.id);
+if (!post.likes.includes(req.userId)) {
+post.likes.push(req.userId);
+}
+await post.save();
+
+const populatedPost = await populatePost(req.params.id);
+res.json(populatedPost);
+} catch (err) {
+
+res.status(500).json({ error: err.message });
+}
 });
 
 // Comment
 router.post("/:id/comment", authMiddleware, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    post.comments.push({ user: req.userId, text: req.body.text });
-    await post.save();
-    
-    const populatedPost = await populatePost(req.params.id);
-    res.json(populatedPost);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+try {
+const post = await Post.findById(req.params.id);
+post.comments.push({ user: req.userId, text: req.body.text });
+await post.save();
+
+const populatedPost = await populatePost(req.params.id);
+res.json(populatedPost);
+} catch (err) {
+res.status(500).json({ error: err.message });
+}
 });
 
 // Delete post
 router.delete("/:id", authMiddleware, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    
-    // Check if user owns the post
-    if (post.author.toString() !== req.userId) {
-      return res.status(403).json({ error: "You can only delete your own posts" });
-    }
-    
-    await Post.findByIdAndDelete(req.params.id);
-    res.json({ message: "Post deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+try {
+const post = await Post.findById(req.params.id);
+
+// Check if user owns the post
+if (post.author.toString() !== req.userId) {
+return res.status(403).json({ error: "You can only delete your own posts" });
+}
+
+await Post.findByIdAndDelete(req.params.id);
+res.json({ message: "Post deleted successfully" });
+} catch (err) {
+res.status(500).json({ error: err.message });
+}
 });
 
 // Edit post
 router.put("/:id", authMiddleware, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    
-    // Check if user owns the post
-    if (post.author.toString() !== req.userId) {
-      return res.status(403).json({ error: "You can only edit your own posts" });
-    }
-    
-    post.title = req.body.title || post.title;
-    post.content = req.body.content || post.content;
-    await post.save();
-    
-    const populatedPost = await populatePost(req.params.id);
-    res.json(populatedPost);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+try {
+const post = await Post.findById(req.params.id);
+
+// Check if user owns the post
+if (post.author.toString() !== req.userId) {
+return res.status(403).json({ error: "You can only edit your own posts" });
+}
+
+post.title = req.body.title || post.title;
+post.content = req.body.content || post.content;
+await post.save();
+
+const populatedPost = await populatePost(req.params.id);
+res.json(populatedPost);
+} catch (err) {
+res.status(500).json({ error: err.message });
+}
 });
 
 // Delete comment
 router.delete("/:postId/comment/:commentId", authMiddleware, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.postId);
-    
-    if (!post) {
-      return res.status(404).json({ error: "Post not found" });
-    }
+try {
+const post = await Post.findById(req.params.postId);
 
-    const comment = post.comments.id(req.params.commentId);
-    
-    if (!comment) {
-      return res.status(404).json({ error: "Comment not found" });
-    }
+if (!post) {
+return res.status(404).json({ error: "Post not found" });
+}
 
-    // Check if user owns the comment or the post
-    if (comment.user.toString() !== req.userId && post.author.toString() !== req.userId) {
-      return res.status(403).json({ error: "You can only delete your own comments" });
-    }
+const comment = post.comments.id(req.params.commentId);
 
-    // Remove the comment
-    post.comments.pull(req.params.commentId);
-    await post.save();
-    
-    const populatedPost = await populatePost(req.params.postId);
-    res.json(populatedPost);
-  } catch (err) {
-    console.error('Delete comment error:', err);
-    res.status(500).json({ error: err.message });
-  }
+if (!comment) {
+return res.status(404).json({ error: "Comment not found" });
+}
+
+// Check if user owns the comment or the post
+if (comment.user.toString() !== req.userId && post.author.toString() !== req.userId) {
+return res.status(403).json({ error: "You can only delete your own comments" });
+}
+
+// Remove the comment
+post.comments.pull(req.params.commentId);
+await post.save();
+
+const populatedPost = await populatePost(req.params.postId);
+res.json(populatedPost);
+} catch (err) {
+console.error('Delete comment error:', err);
+res.status(500).json({ error: err.message });
+}
 });
 
 module.exports = router;
