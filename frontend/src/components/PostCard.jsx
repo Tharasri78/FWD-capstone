@@ -12,6 +12,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
   const [editContent, setEditContent] = useState(post.content);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState(null);
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   const { user: currentUser } = useAuth();
 
@@ -95,15 +96,57 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
     }
   };
 
+  // Share functionality
+  const getPostUrl = () => {
+    return `${window.location.origin}/feed#post-${post._id}`;
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(getPostUrl());
+      alert("Post link copied to clipboard!");
+      setShowShareOptions(false);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = getPostUrl();
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      alert("Post link copied to clipboard!");
+      setShowShareOptions(false);
+    }
+  };
+
+  const shareOnTwitter = () => {
+    const text = `Check out this post: "${post.title}"`;
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(getPostUrl())}`;
+    window.open(url, "_blank");
+    setShowShareOptions(false);
+  };
+
+  const shareOnFacebook = () => {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getPostUrl())}`;
+    window.open(url, "_blank");
+    setShowShareOptions(false);
+  };
+
+  const shareOnLinkedIn = () => {
+    const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(getPostUrl())}`;
+    window.open(url, "_blank");
+    setShowShareOptions(false);
+  };
+
   const isPostAuthor = currentUser && post.author && post.author._id === currentUser._id;
 
   const postAuthor = post.author || {};
   const postComments = post.comments || [];
 
   return (
-    <article className="card post">
-
-      {/* FIXED — Proper header spacing + glass view-profile */}
+    <article className="card post" id={`post-${post._id}`}>
+      {/* Post Header */}
       <header className="post-head spaced">
         <div className="post-avatar" data-letter={getInitial(postAuthor.username)}></div>
         <div>
@@ -173,7 +216,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
           <h3 className="post-title">{post.title}</h3>
           <p className="post-body">{post.content}</p>
           
-          {/* ADD THIS SECTION FOR IMAGE DISPLAY */}
+          {/* Post Image */}
           {post.image && post.image.url && (
             <div className="post-image">
               <img 
@@ -186,13 +229,44 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
         </>
       )}
 
+      {/* Post Actions */}
       <div className="spaced mt-12">
-        <button className="btn secondary" onClick={handleLike}>
-          ❤️ {post.likes?.length || 0}
-        </button>
-        <div className="mute">{postComments.length} comments</div>
+        <div className="post-actions-left">
+          <button className="btn secondary" onClick={handleLike}>
+            ❤️ {post.likes?.length || 0}
+          </button>
+          <div className="mute">{postComments.length} comments</div>
+        </div>
+        
+        {/* Share Button */}
+<div className="share-container">
+  <button 
+    className="share-btn glass"
+    onClick={() => setShowShareOptions(!showShareOptions)}
+  >
+    🔗 Share
+  </button>
+  
+  {showShareOptions && (
+    <div className="share-dropdown">
+      <button onClick={copyToClipboard} className="share-option">
+        📋 Copy Link
+      </button>
+      <button onClick={shareOnTwitter} className="share-option">
+        🐦 Twitter
+      </button>
+      <button onClick={shareOnFacebook} className="share-option">
+        📘 Facebook
+      </button>
+      <button onClick={shareOnLinkedIn} className="share-option">
+        💼 LinkedIn
+      </button>
+    </div>
+  )}
+</div>
       </div>
 
+      {/* Comment Form */}
       <form className="row mt-12" onSubmit={handleComment}>
         <input
           className="input"
@@ -206,6 +280,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
         </button>
       </form>
 
+      {/* Comments Section */}
       <div className="comments mt-12">
         {postComments.slice().reverse().map((c, i) => {
           const commentUser = c.user || {};
@@ -218,7 +293,6 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
                 <div className="comment-header">
                   <span className="author">{commentUser.username || "Loading..."}</span>
 
-                  {/* FIXED — replace comment-profile-link with glass style */}
                   <Link
                     to={`/profile/${commentUser._id || ""}`}
                     className="view-profile-glass"

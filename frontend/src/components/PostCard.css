@@ -348,3 +348,109 @@
   border-radius: 8px;
   border: 1px solid var(--edge);
 }
+/* Share Styles */
+.post-actions-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.share-container {
+  position: relative;
+  display: inline-block;
+}
+
+.share-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 8px;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  margin-top: 8px;
+}
+
+.share-option {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text);
+  padding: 8px 12px;
+  text-align: left;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.share-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .share-dropdown {
+    right: -50px;
+  }
+  
+  .post-actions-left {
+    gap: 12px;
+  }
+}
+/* ===============================
+   SHARE BUTTON STYLES
+================================== */
+
+.share-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f6b17a;
+  padding: 6px 14px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+}
+
+.share-btn:hover {
+  background: rgba(246, 177, 122, 0.15);
+  color: #fff;
+  transform: translateY(-1px);
+  border-color: rgba(246, 177, 122, 0.3);
+}
+
+.share-btn:active {
+  transform: translateY(0);
+}
+
+/* If you want it to match your view-profile-glass button exactly */
+.share-btn.glass {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f6b17a;
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.share-btn.glass:hover {
+  background: rgba(246, 177, 122, 0.15);
+  color: #fff;
+  transform: translateY(-1px);
+}

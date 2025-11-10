@@ -126,6 +126,31 @@ useEffect(() => {
       throw error;
     }
   };
+  // Add this to your Feed.jsx
+useEffect(() => {
+  // Check if URL has hash for specific post (from shared link)
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#post-')) {
+    const postId = hash.replace('#post-', '');
+    
+    // Wait for posts to load
+    const timer = setTimeout(() => {
+      const element = document.getElementById(`post-${postId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        // Add highlight effect
+        element.style.backgroundColor = 'rgba(246, 177, 122, 0.1)';
+        element.style.transition = 'background-color 0.3s ease';
+        
+        setTimeout(() => {
+          element.style.backgroundColor = '';
+        }, 3000);
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }
+}, [posts]);
 
   return (
     <div className="grid grid-2">
