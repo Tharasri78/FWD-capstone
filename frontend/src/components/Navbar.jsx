@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Navbar.css"; // ✅ FIXED - Use Navbar.css, not Notifications.css
+import "./Navbar.css";
 import { useAuth } from "../context/AuthContext";
 import { fetchPosts } from "../services/posts";
 
@@ -9,7 +9,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [notificationCount, setNotificationCount] = useState(0);
 
-  // Fetch notifications count - only count UNREAD ones
+  // Fetch notifications count
   const loadNotifications = async () => {
     if (!user) return;
     
@@ -49,9 +49,17 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    loadNotifications();
+    if (user) {
+      loadNotifications();
+    }
+    
     // Refresh notifications every 30 seconds
-    const interval = setInterval(loadNotifications, 30000);
+    const interval = setInterval(() => {
+      if (user) {
+        loadNotifications();
+      }
+    }, 30000);
+    
     return () => clearInterval(interval);
   }, [user]);
 
@@ -64,10 +72,17 @@ export default function Navbar() {
     <header className="nav">
       <div className="nav-wrap container">
         <Link to={user ? "/feed" : "/"} className="brand">MERN Blog</Link>
+        
         <nav className="links">
           {user ? (
             <>
               <Link to="/feed">Feed</Link>
+              
+              {/* Direct link to Trending Page */}
+              <Link to="/trending" className="trending-link">
+                Trending
+              </Link>
+              
               <Link to={`/profile/${user._id}`}>Profile</Link>
               <Link to="/notifications" className="notification-link">
                 Notifications

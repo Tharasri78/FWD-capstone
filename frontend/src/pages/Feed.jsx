@@ -22,7 +22,25 @@ export default function Feed() {
       setLoading(false);
     }
   };
-
+// Add this useEffect to your Feed.jsx
+useEffect(() => {
+  // Check if URL has hash for specific post
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#post-')) {
+    const postId = hash.replace('#post-', '');
+    setTimeout(() => {
+      const element = document.getElementById(`post-${postId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        // Add highlight effect
+        element.style.backgroundColor = 'rgba(246, 177, 122, 0.1)';
+        setTimeout(() => {
+          element.style.backgroundColor = '';
+        }, 2000);
+      }
+    }, 500);
+  }
+}, [posts]);
   useEffect(() => { load(); }, []);
 
   const handleImageChange = (e) => {

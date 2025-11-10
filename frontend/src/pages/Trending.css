@@ -1,0 +1,90 @@
+.trending-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.trending-header {
+  text-align: center;
+  background: linear-gradient(135deg, #242f49 0%, #1a2238 100%);
+  border: 1px solid rgba(246, 177, 122, 0.3);
+}
+
+.trending-header h1 {
+  color: #f6b17a;
+  margin-bottom: 8px;
+  font-size: 2rem;
+}
+
+.trending-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.trending-post-card {
+  position: relative;
+}
+
+.trending-badge {
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.engagement-stats {
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  display: flex;
+  gap: 12px;
+  background: rgba(26, 34, 56, 0.9);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(246, 177, 122, 0.3);
+  z-index: 10;
+}
+
+.engagement-stats span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.center {
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .trending-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .trending-badge {
+    left: 10px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  
+  .engagement-stats {
+    right: 10px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    gap: 8px;
+  }
+}

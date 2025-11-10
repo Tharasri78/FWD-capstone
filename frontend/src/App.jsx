@@ -8,6 +8,8 @@ import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
+import Trending from "./pages/Trending"; // Add this import
+
 
 export default function App() {
   const { user } = useAuth();
@@ -47,6 +49,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+  path="/trending"
+  element={
+    <ProtectedRoute>
+      <Trending />
+    </ProtectedRoute>
+  }
+/>
 
           <Route path="*" element={<div style={{padding: 24}}>404 – Page Not Found</div>} />
         </Routes>
