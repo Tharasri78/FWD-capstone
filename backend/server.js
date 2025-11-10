@@ -12,7 +12,8 @@ app.use(cors({
 }));
 
 // MongoDB connection - using MONGODB_URI
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mern-blog')
+mongoose.connect(process.env.MONGO_URI)
+
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.error('MongoDB connection error:', err));
 
