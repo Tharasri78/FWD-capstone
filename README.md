@@ -62,12 +62,4 @@ npm run dev
 👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
 
 
-## After fixing
 
-1. Save (`Ctrl + S`)
-2. Commit:
-   ```bash
-   git add README.md
-   git commit -m "Move demo video section outside code block"
-   git push
-   ```
