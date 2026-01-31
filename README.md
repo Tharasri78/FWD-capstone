@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  📌 Microblogging Platform (MERN Stack)
 
 A full-stack microblogging web application built using the MERN stack, where users can create and view short text posts.  
@@ -56,4 +57,6 @@ npm run dev
 🌐 Demo vedio
 
 👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
+
+
 
