@@ -1,6 +1,6 @@
 📌 Microblogging Platform (MERN Stack)
 
-A full-stack microblogging web application built using the MERN stack, where users can create and view short text posts.  
+A microblogging web application built using the MERN stack, where users can create and view short text posts.  
 This project focuses on real-world frontend–backend integration, API handling, and database operations.
 
 🚀 Features
@@ -31,8 +31,7 @@ This project focuses on real-world frontend–backend integration, API handling,
 
 FWD-capstone/
 ├── frontend/
-├── backend/
-
+└── backend/
 
 ## ⚙️ How to Run Locally
 
@@ -60,6 +59,3 @@ npm run dev
 🎥 Demo Video
 
 👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
-
-
-
