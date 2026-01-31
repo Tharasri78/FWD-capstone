@@ -56,10 +56,11 @@ cd backend
 npm install
 npm run dev
 
-🌐 Demo vedio
+
+🎥 Demo Video
 
 👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
 
 
----
+
 
