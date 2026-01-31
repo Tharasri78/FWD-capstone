@@ -27,13 +27,12 @@ This project focuses on real-world frontend–backend integration, API handling,
 
 - MongoDB
 
-📂 Project Structure
+## 📂 Project Structure
 
 FWD-capstone/
 ├── frontend/
 ├── backend/
 
----
 
 ## ⚙️ How to Run Locally
 
@@ -62,12 +61,6 @@ npm run dev
 
 👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
 
-⚠️ **Key rule**
-
-- The line with **three backticks ```** must appear **before** the Demo Video heading
-- Demo Video section must NOT be inside any code block
-
----
 
 ## After fixing
 
