@@ -56,13 +56,27 @@ cd backend
 npm install
 npm run dev
 
-```bash
+```
 
 
 🎥 Demo Video
 
 👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
 
+
+⚠️ **Key rule**
+- The line with **three backticks ```** must appear **before** the Demo Video heading
+- Demo Video section must NOT be inside any code block
+
+---
+
+## After fixing
+1. Save (`Ctrl + S`)
+2. Commit:
+   ```bash
+   git add README.md
+   git commit -m "Move demo video section outside code block"
+   git push
 
 
 
