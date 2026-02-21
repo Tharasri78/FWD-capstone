@@ -217,109 +217,109 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
           <p className="post-body">{post.content}</p>
           
           {/* Post Image */}
-          {post.image && post.image.url && (
+          {post.image && (
             <div className="post-image">
               <img 
-              src={`http://localhost:5000${post.image.url}`}
+                src={post.image}
                 alt="Post image" 
                 className="post-image-content"
               />
             </div>
           )}
+
+          {/* Post Actions */}
+          <div className="spaced mt-12">
+            <div className="post-actions-left">
+              <button className="btn secondary" onClick={handleLike}>
+                ❤️ {post.likes?.length || 0}
+              </button>
+              <div className="mute">{postComments.length} comments</div>
+            </div>
+            
+            {/* Share Button */}
+            <div className="share-container">
+              <button 
+                className="share-btn glass"
+                onClick={() => setShowShareOptions(!showShareOptions)}
+              >
+                🔗 Share
+              </button>
+              
+              {showShareOptions && (
+                <div className="share-dropdown">
+                  <button onClick={copyToClipboard} className="share-option">
+                    📋 Copy Link
+                  </button>
+                  <button onClick={shareOnTwitter} className="share-option">
+                    🐦 Twitter
+                  </button>
+                  <button onClick={shareOnFacebook} className="share-option">
+                    📘 Facebook
+                  </button>
+                  <button onClick={shareOnLinkedIn} className="share-option">
+                    💼 LinkedIn
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Comment Form */}
+          <form className="row mt-12" onSubmit={handleComment}>
+            <input
+              className="input"
+              placeholder="Write a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              disabled={commentLoading}
+            />
+            <button className="btn" type="submit" disabled={commentLoading}>
+              {commentLoading ? "Posting..." : "Comment"}
+            </button>
+          </form>
+
+          {/* Comments Section */}
+          <div className="comments mt-12">
+            {postComments.slice().reverse().map((c, i) => {
+              const commentUser = c.user || {};
+              const isCommentAuthor = currentUser && commentUser._id === currentUser._id;
+
+              return (
+                <div key={i} className="comment">
+                  <div className="comment-avatar" data-letter={getInitial(commentUser.username)}></div>
+                  <div className="comment-content">
+                    <div className="comment-header">
+                      <span className="author">{commentUser.username || "Loading..."}</span>
+
+                      <Link
+                        to={`/profile/${commentUser._id || ""}`}
+                        className="view-profile-glass"
+                      >
+                        View Profile
+                      </Link>
+
+                      {isCommentAuthor && (
+                        <button
+                          className="delete-comment-btn"
+                          onClick={() => handleDeleteComment(c._id)}
+                          disabled={deletingCommentId === c._id}
+                        >
+                          {deletingCommentId === c._id ? "..." : "Delete Comment"}
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="comment-text">{c.text}</div>
+                    <div className="comment-time">
+                      {new Date(c.date || post.createdAt).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </>
       )}
-
-      {/* Post Actions */}
-      <div className="spaced mt-12">
-        <div className="post-actions-left">
-          <button className="btn secondary" onClick={handleLike}>
-            ❤️ {post.likes?.length || 0}
-          </button>
-          <div className="mute">{postComments.length} comments</div>
-        </div>
-        
-        {/* Share Button */}
-<div className="share-container">
-  <button 
-    className="share-btn glass"
-    onClick={() => setShowShareOptions(!showShareOptions)}
-  >
-    🔗 Share
-  </button>
-  
-  {showShareOptions && (
-    <div className="share-dropdown">
-      <button onClick={copyToClipboard} className="share-option">
-        📋 Copy Link
-      </button>
-      <button onClick={shareOnTwitter} className="share-option">
-        🐦 Twitter
-      </button>
-      <button onClick={shareOnFacebook} className="share-option">
-        📘 Facebook
-      </button>
-      <button onClick={shareOnLinkedIn} className="share-option">
-        💼 LinkedIn
-      </button>
-    </div>
-  )}
-</div>
-      </div>
-
-      {/* Comment Form */}
-      <form className="row mt-12" onSubmit={handleComment}>
-        <input
-          className="input"
-          placeholder="Write a comment..."
-          value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
-          disabled={commentLoading}
-        />
-        <button className="btn" type="submit" disabled={commentLoading}>
-          {commentLoading ? "Posting..." : "Comment"}
-        </button>
-      </form>
-
-      {/* Comments Section */}
-      <div className="comments mt-12">
-        {postComments.slice().reverse().map((c, i) => {
-          const commentUser = c.user || {};
-          const isCommentAuthor = currentUser && commentUser._id === currentUser._id;
-
-          return (
-            <div key={i} className="comment">
-              <div className="comment-avatar" data-letter={getInitial(commentUser.username)}></div>
-              <div className="comment-content">
-                <div className="comment-header">
-                  <span className="author">{commentUser.username || "Loading..."}</span>
-
-                  <Link
-                    to={`/profile/${commentUser._id || ""}`}
-                    className="view-profile-glass"
-                  >
-                    View Profile
-                  </Link>
-
-                  {isCommentAuthor && (
-                    <button
-                      className="delete-comment-btn"
-                      onClick={() => handleDeleteComment(c._id)}
-                      disabled={deletingCommentId === c._id}
-                    >
-                      {deletingCommentId === c._id ? "..." : "Delete Comment"}
-                    </button>
-                  )}
-                </div>
-
-                <div className="comment-text">{c.text}</div>
-                <div className="comment-time">
-                  {new Date(c.date || post.createdAt).toLocaleString()}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </article>
   );
 }

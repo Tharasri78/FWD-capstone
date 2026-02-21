@@ -40,7 +40,7 @@ useEffect(() => {
       }
     }, 500);
   }
-}, [posts]);
+}, [posts]);z
   useEffect(() => { load(); }, []);
 
   const handleImageChange = (e) => {
