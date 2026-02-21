@@ -21,6 +21,39 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
+/* ================= GET ALL POSTS (FIX) ================= */
+router.get("/", async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .populate("author", "username")
+      .populate("comments.user", "username")
+      .sort({ createdAt: -1 });
+
+    res.json(posts);
+  } catch (err) {
+    console.error("Fetch posts error:", err);
+    res.status(500).json({ error: "Failed to load posts" });
+  }
+});
+
+/* ================= CREATE POST ================= */
+router.post("/", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.create({
+      title: req.body.title,
+      content: req.body.content,
+      author: req.userId,
+    });
+
+    const populatedPost = await Post.findById(post._id)
+      .populate("author", "username");
+
+    res.json(populatedPost);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /* ================= LIKE POST ================= */
 router.put("/:id/like", authMiddleware, async (req, res) => {
   try {
@@ -30,7 +63,6 @@ router.put("/:id/like", authMiddleware, async (req, res) => {
     if (!post.likes.includes(req.userId)) {
       post.likes.push(req.userId);
 
-      // 🔔 CREATE NOTIFICATION
       if (post.author.toString() !== req.userId) {
         await Notification.create({
           recipient: post.author,
@@ -60,7 +92,6 @@ router.post("/:id/comment", authMiddleware, async (req, res) => {
       date: new Date(),
     });
 
-    // 🔔 CREATE NOTIFICATION
     if (post.author.toString() !== req.userId) {
       await Notification.create({
         recipient: post.author,
@@ -71,7 +102,12 @@ router.post("/:id/comment", authMiddleware, async (req, res) => {
     }
 
     await post.save();
-    res.json(post);
+
+    const populatedPost = await Post.findById(post._id)
+      .populate("author", "username")
+      .populate("comments.user", "username");
+
+    res.json(populatedPost);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
