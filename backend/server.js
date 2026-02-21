@@ -27,8 +27,8 @@ app.use(
       if (!origin) return callback(null, true);
 
       const allowedOrigins = [
-        "http://localhost:5173",                 // local dev
-        process.env.FRONTEND_URL                 // production frontend
+        "http://localhost:5173",
+        process.env.FRONTEND_URL
       ];
 
       if (allowedOrigins.includes(origin)) {
@@ -43,8 +43,7 @@ app.use(
   })
 );
 
-// Handle preflight explicitly
-app.options("*", cors());
+// ✅ EXPRESS 5 SAFE PREFLIGHT HANDLER
 
 app.use("/uploads", express.static("uploads"));
 
