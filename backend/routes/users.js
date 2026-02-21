@@ -31,6 +31,15 @@ function authMiddleware(req, res, next) {
     next();
   });
 }
+// Get logged-in user's profile
+router.get("/me", authMiddleware, async (req, res) => {
+  const user = await User.findById(req.userId)
+    .select("-password")
+    .populate("followers", "username")
+    .populate("following", "username");
+
+  res.json(user);
+});
 
 /* ================= UPDATE PROFILE ================= */
 router.put(

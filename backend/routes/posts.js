@@ -51,11 +51,11 @@ router.post("/", authMiddleware, upload.single("image"), async (req, res) => {
     };
 
     if (req.file) {
-      postData.image = {
-        url: `/uploads/${req.file.filename}`,
-        filename: req.file.filename,
-      };
-    }
+  postData.image = {
+    url: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+    filename: req.file.filename,
+  };
+}
 
     const post = new Post(postData);
     await post.save();

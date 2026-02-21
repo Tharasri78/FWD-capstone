@@ -1,3 +1,4 @@
+// frontend/services/notifications.js
 import BASE_URL from "./base";
 
 const API_URL = `${BASE_URL}/api`;
