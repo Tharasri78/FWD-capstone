@@ -1,21 +1,27 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const config = {
   // Server
   port: process.env.PORT || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  
-  // Database - Use MONGODB_URI (standard naming)
+  nodeEnv: process.env.NODE_ENV || "development",
+
+  // Database (NO localhost fallback)
   database: {
-    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/blogApp'
+    uri: process.env.MONGODB_URI
   },
-  
-  // CORS - Updated to port 5173
+
+  // CORS (dev vs prod)
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
-  },
-  
-  // ... rest of your config
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.CORS_ORIGIN
+        : "http://localhost:5173"
+  }
 };
+
+// Fail fast if Mongo URI is missing
+if (!config.database.uri) {
+  throw new Error("❌ MONGODB_URI is not defined in environment variables");
+}
 
 module.exports = config;

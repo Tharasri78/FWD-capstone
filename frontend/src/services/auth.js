@@ -1,5 +1,7 @@
 // services/auth.js
-const API_URL = "http://localhost:5000/api";  // Add /api here
+import BASE_URL from "./base";
+
+const API_URL = `${BASE_URL}/api`;
 
 export const login = async (email, password) => {
   const response = await fetch(`${API_URL}/auth/login`, {

@@ -1,5 +1,7 @@
 // services/users.js
-const API_URL = "http://localhost:5000/api";
+import BASE_URL from "./base";
+
+const API_URL = `${BASE_URL}/api`;
 
 const getToken = () => {
   return localStorage.getItem('token');
