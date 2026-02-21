@@ -121,47 +121,16 @@ export default function PostCard({
           <h3 className="post-title">{post.title}</h3>
           <p className="post-body">{post.content}</p>
 
-          {/* Updated image section with debug + error handling */}
-          {post.image ? (
+          {/* ✅ IMAGE FIX */}
+          {post.image && (
             <div className="post-image">
               <img
                 src={post.image}
-                alt="Post image"
+                alt="Post"
                 className="post-image-content"
                 loading="lazy"
-                crossOrigin="anonymous"
-                referrerPolicy="no-referrer"
-                style={{
-                  maxWidth: "100%",
-                  height: "auto",
-                  borderRadius: "8px",
-                  marginTop: "12px",
-                  display: "block"
-                }}
-                onError={(e) => {
-                  console.error("Failed to load image:", post.image);
-                  e.target.src = "https://via.placeholder.com/600x400?text=Image+Not+Found";
-                  e.target.alt = "Image failed to load";
-                }}
               />
-              {/* Debug: show the actual URL being used */}
-              <div
-                style={{
-                  fontSize: "11px",
-                  color: "#ff4444",
-                  marginTop: "4px",
-                  wordBreak: "break-all",
-                  background: "#1a1a1a",
-                  padding: "4px 8px",
-                  borderRadius: "4px"
-                }}
-              >
-                Debug URL: {post.image}
-              </div>
             </div>
-          ) : (
-            // Optional: show something when there's no image
-            <div style={{ height: "1px", margin: "12px 0" }} />
           )}
         </>
       )}
