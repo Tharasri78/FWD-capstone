@@ -1,6 +1,7 @@
+// backend/middleware/upload.js
 const multer = require("multer");
 
-// Store file in memory (NOT disk)
+// USE MEMORY STORAGE (required for Cloudinary)
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
