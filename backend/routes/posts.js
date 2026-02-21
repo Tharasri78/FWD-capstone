@@ -1,11 +1,14 @@
+// backend/routes/posts.js
+
 const express = require("express");
 const Post = require("../models/Post");
 const Notification = require("../models/Notification");
 const jwt = require("jsonwebtoken");
+const upload = require("../middleware/upload"); // ✅ Cloudinary upload
 
 const router = express.Router();
 
-/* ================= AUTH ================= */
+/* ================= AUTH MIDDLEWARE ================= */
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ error: "No token" });
@@ -21,7 +24,7 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
-/* ================= GET ALL POSTS (FIX) ================= */
+/* ================= GET ALL POSTS ================= */
 router.get("/", async (req, res) => {
   try {
     const posts = await Post.find()
@@ -36,23 +39,39 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* ================= CREATE POST ================= */
-router.post("/", authMiddleware, async (req, res) => {
-  try {
-    const post = await Post.create({
-      title: req.body.title,
-      content: req.body.content,
-      author: req.userId,
-    });
+/* ================= CREATE POST (WITH IMAGE) ================= */
+router.post(
+  "/",
+  authMiddleware,
+  upload.single("image"), // ✅ image field name MUST be "image"
+  async (req, res) => {
+    try {
+      const postData = {
+        title: req.body.title,
+        content: req.body.content,
+        author: req.userId,
+      };
 
-    const populatedPost = await Post.findById(post._id)
-      .populate("author", "username");
+      // ✅ CLOUDINARY IMAGE
+      if (req.file) {
+        postData.image = {
+          url: req.file.path,       // Cloudinary HTTPS URL
+          filename: req.file.filename,
+        };
+      }
 
-    res.json(populatedPost);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+      const post = await Post.create(postData);
+
+      const populatedPost = await Post.findById(post._id)
+        .populate("author", "username");
+
+      res.json(populatedPost);
+    } catch (err) {
+      console.error("Create post error:", err);
+      res.status(500).json({ error: err.message });
+    }
   }
-});
+);
 
 /* ================= LIKE POST ================= */
 router.put("/:id/like", authMiddleware, async (req, res) => {

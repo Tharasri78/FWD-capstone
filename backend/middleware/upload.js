@@ -1,39 +1,34 @@
-// middleware/upload.js
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+// backend/middleware/upload.js
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = 'uploads';
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
-  }
+/* ================= CLOUDINARY CONFIG ================= */
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// File filter
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Only image files are allowed!'), false);
-  }
-};
+/* ================= MULTER STORAGE ================= */
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "microblog_posts",       // folder in Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png"],
+    transformation: [
+      { width: 1200, crop: "limit" } // optional optimization
+    ],
+  },
+});
 
+/* ================= MULTER INSTANCE ================= */
 const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+  storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  }
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
 });
 
 module.exports = upload;
