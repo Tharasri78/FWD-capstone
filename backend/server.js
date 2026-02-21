@@ -14,6 +14,10 @@ if (!process.env.MONGODB_URI) {
   throw new Error("❌ MONGODB_URI is not defined");
 }
 
+if (!process.env.JWT_SECRET) {
+  throw new Error("❌ JWT_SECRET is not defined");
+}
+
 /* ================= APP INIT ================= */
 const app = express();
 
@@ -23,7 +27,6 @@ app.use(express.json());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (Postman, server-to-server)
       if (!origin) return callback(null, true);
 
       const allowedOrigins = [
@@ -34,7 +37,7 @@ app.use(
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("CORS not allowed"));
+        callback(null, false);
       }
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -42,8 +45,6 @@ app.use(
     credentials: true
   })
 );
-
-// ✅ EXPRESS 5 SAFE PREFLIGHT HANDLER
 
 app.use("/uploads", express.static("uploads"));
 

@@ -10,6 +10,7 @@ const router = express.Router();
 /* ================= AUTH MIDDLEWARE ================= */
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
+
   if (!authHeader) {
     return res.status(401).json({ error: "No authorization header" });
   }
@@ -19,12 +20,12 @@ function authMiddleware(req, res, next) {
     : authHeader;
 
   if (!token) {
-    return res.status(401).json({ error: "No token" });
+    return res.status(401).json({ error: "No token provided" });
   }
 
-  jwt.verify(token, "secretkey", (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ error: "Invalid token" });
+      return res.status(401).json({ error: "Invalid or expired token" });
     }
     req.userId = decoded.id;
     next();
@@ -50,6 +51,7 @@ router.put(
         if (existingUser) {
           return res.status(400).json({ error: "Username already taken" });
         }
+
         updateData.username = username;
       }
 
@@ -101,7 +103,8 @@ router.put(
 
       res.json(updatedUser);
     } catch (err) {
-      res.status(500).json({ error: err.message });
+      console.error("Profile update error:", err);
+      res.status(500).json({ error: "Server error" });
     }
   }
 );
@@ -110,9 +113,7 @@ router.put(
 router.put("/:id/follow", authMiddleware, async (req, res) => {
   try {
     if (req.userId === req.params.id) {
-      return res
-        .status(400)
-        .json({ error: "You cannot follow yourself" });
+      return res.status(400).json({ error: "You cannot follow yourself" });
     }
 
     const userToFollow = await User.findById(req.params.id);
@@ -156,7 +157,8 @@ router.put("/:id/follow", authMiddleware, async (req, res) => {
       isFollowing: !isFollowing,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Follow error:", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -171,7 +173,7 @@ router.get("/:id/is-following", authMiddleware, async (req, res) => {
     const isFollowing = user.followers.includes(req.userId);
     res.json({ isFollowing });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -189,7 +191,7 @@ router.get("/:id", async (req, res) => {
 
     res.json(user);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
