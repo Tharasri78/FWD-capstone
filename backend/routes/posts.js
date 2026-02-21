@@ -73,7 +73,13 @@ router.post("/", authMiddleware, upload.single("image"), async (req, res) => {
 // Get all posts
 router.get("/", async (req, res) => {
   try {
-    const posts = await Post.find()
+    const filter = {};
+
+    if (req.query.author) {
+      filter.author = req.query.author;
+    }
+
+    const posts = await Post.find(filter)
       .populate("author", "username")
       .populate("comments.user", "username");
 
