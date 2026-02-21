@@ -1,26 +1,19 @@
 // services/auth.js
-import BASE_URL from "./base";
-
-const API_URL = `${BASE_URL}/api`;
+import api from "./api";
 
 export const login = async (email, password) => {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
+  const response = await api.post("/auth/login", {
+    email,
+    password,
   });
-  return await response.json();
+  return response.data;
 };
 
 export const register = async (username, email, password) => {
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username, email, password }),
+  const response = await api.post("/auth/register", {
+    username,
+    email,
+    password,
   });
-  return await response.json();
+  return response.data;
 };
