@@ -15,7 +15,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const { user: currentUser } = useAuth();
- 
+
   const getInitial = (username) => {
     if (!username || typeof username !== "string" || username.trim() === "") return "U";
     return username.charAt(0).toUpperCase();
