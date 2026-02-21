@@ -15,7 +15,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
   const [showShareOptions, setShowShareOptions] = useState(false);
 
   const { user: currentUser } = useAuth();
-
+ 
   const getInitial = (username) => {
     if (!username || typeof username !== "string" || username.trim() === "") return "U";
     return username.charAt(0).toUpperCase();
@@ -76,7 +76,6 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
       setIsDeleting(false);
     }
   };
-
   const handleEdit = async () => {
     if (!editTitle.trim() || !editContent.trim()) {
       alert("Title and content cannot be empty");
@@ -173,9 +172,7 @@ export default function PostCard({ post, onLike, onComment, onDelete, onEdit, on
               {isDeleting ? "Deleting..." : "Delete"}
             </button>
           </div>
-        )}
-
-        <Link className="view-profile-glass" to={`/profile/${postAuthor._id || ""}`}>
+        )}  <Link className="view-profile-glass" to={`/profile/${postAuthor._id || ""}`}>
           View Profile
         </Link>
       </header>
