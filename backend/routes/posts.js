@@ -127,5 +127,34 @@ router.post("/:id/comment", authMiddleware, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+/* ================= DELETE POST ================= */
+router.delete("/:id", authMiddleware, async (req, res) => {
+  const post = await Post.findById(req.params.id);
+
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  if (post.author.toString() !== req.userId)
+    return res.status(403).json({ error: "Not allowed" });
+
+  await post.deleteOne();
+  res.json({ success: true });
+});
+
+/* ================= EDIT POST ================= */
+router.put("/:id", authMiddleware, async (req, res) => {
+  const post = await Post.findById(req.params.id);
+
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  if (post.author.toString() !== req.userId)
+    return res.status(403).json({ error: "Not allowed" });
+
+  post.title = req.body.title;
+  post.content = req.body.content;
+  await post.save();
+
+  const populated = await Post.findById(post._id)
+    .populate("author", "username");
+
+  res.json(populated);
+});
 
 module.exports = router;
