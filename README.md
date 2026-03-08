@@ -1,61 +1,159 @@
-📌 Microblogging Platform (MERN Stack)
 
-A microblogging web application built using the MERN stack, where users can create and view short text posts.  
-This project focuses on real-world frontend–backend integration, API handling, and database operations.
+# Microblogging Platform
 
-🚀 Features
+A **full-stack Microblogging Web Application** built using the **MERN stack (MongoDB, Express.js, React.js, Node.js)**.
+The platform allows users to create and view short text posts through a responsive web interface.
 
-• Create and view short text posts  
-• Responsive frontend built with React  
-• REST APIs for handling posts and data  
-• MongoDB for storing application data  
-• Separate frontend and backend structure  
-• Deployed frontend and backend
+This project demonstrates **full-stack development concepts such as REST API integration, database operations, and frontend–backend communication**.
 
-🛠️ Tech Stack
+---
 
-**Frontend**
+## Live Application
 
-- React.js
+Live:https://micro-blogging-web.vercel.app/login
 
-**Backend**
 
-- Node.js
-- Express.js
+---
 
-**Database**
+## Features
 
-- MongoDB
+• Create short text posts
+• View all posts dynamically
+• Responsive user interface
+• REST API for post management
+• MongoDB database integration
+• Full-stack deployment
 
-## 📂 Project Structure
+---
 
-FWD-capstone/
-├── frontend/
-└── backend/
+## Tech Stack
 
-## ⚙️ How to Run Locally
+### Frontend
 
-### 1. Clone the repository
+* React.js
+* Axios
+* CSS
 
-```bash
-git clone https://github.com/Tharasi78/FWD-capstone.git
+### Backend
+
+* Node.js
+* Express.js
+
+### Database
+
+* MongoDB Atlas
+
+### Deployment
+
+* Frontend: Vercel
+* Backend: Node.js Server
+
+---
+
+## System Architecture
+
+```
+React Frontend
+      │
+      ▼
+Express REST API
+      │
+      ▼
+MongoDB Database
+```
+
+The React frontend communicates with the Express backend using REST APIs.
+The backend processes requests and stores or retrieves data from MongoDB.
+
+---
+
+## Project Structure
+
+```
+FWD-capstone
+│
+├── frontend
+│   ├── src
+│   │   ├── components
+│   │   ├── pages
+│   │   └── styles
+│   └── package.json
+│
+├── backend
+│   ├── models
+│   ├── routes
+│   ├── controllers
+│   └── server.js
+│
+└── README.md
+```
+
+---
+
+## Installation and Setup
+
+### Clone Repository
+
+```
+git clone https://github.com/Tharasri78/FWD-capstone.git
 cd FWD-capstone
+```
 
+---
 
-2. Run Frontend
+### Run Frontend
 
+```
 cd frontend
 npm install
 npm start
+```
 
-3. Run Backend
+Frontend runs on:
 
+```
+http://localhost:3000
+```
+
+---
+
+### Run Backend
+
+```
 cd backend
 npm install
 npm run dev
-
 ```
 
-🎥 Demo Video
+Backend runs on:
 
-👉https://drive.google.com/file/d/1vn2wovx-wQsyWpXFR_ntZXCm62vyGSlg/view?usp=drivesdk
+```
+http://localhost:5000
+```
+
+---
+
+## Learning Outcomes
+
+* MERN stack application development
+* REST API implementation using Express.js
+* MongoDB database integration
+* Frontend and backend communication using Axios
+* Deploying full-stack applications
+
+---
+
+## Author
+
+**Thara Sri**
+
+
+
+---
+
+## License
+
+This project is developed for **educational and portfolio purposes**.
+
+---
+
