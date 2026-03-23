@@ -175,28 +175,6 @@ useEffect(() => {
             rows="4"
           />
           
-          {/* Image Upload Section */}
-          <div className="image-upload-section mb-12">
-            <input 
-              type="file" 
-              accept="image/*"
-              onChange={handleImageChange}
-              className="image-input"
-              id="image-upload"
-            />
-            <label htmlFor="image-upload" className="btn secondary">
-              📷 Add Image
-            </label>
-            
-            {imagePreview && (
-              <div className="image-preview">
-                <img src={imagePreview} alt="Preview" />
-                <button type="button" onClick={removeImage} className="btn small danger">
-                  Remove Image
-                </button>
-              </div>
-            )}
-          </div>
           
           <button className="btn" type="submit">Publish</button>
         </form>
